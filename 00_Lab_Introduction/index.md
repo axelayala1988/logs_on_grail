@@ -6,7 +6,7 @@ There will be 4 individual labs with some instructor lead demonstration of addit
 
 When you've built a complete DQL query, pin the results to a dashboard by selecting actions and 'Pin to dashboard':
 
-![Actions](../../assets/images/pintodashboard.png)
+![Actions](../assets/images/pintodashboard.png)
 
 To export the dashboard as a reference to the DQL queries at a later time, open the dashboard and select the `...` icon in the upper right to export:
 
