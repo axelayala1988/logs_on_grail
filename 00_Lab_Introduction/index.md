@@ -10,6 +10,6 @@ When you've built a complete DQL query, pin the results to a dashboard by select
 
 To export the dashboard as a reference to the DQL queries at a later time, open the dashboard and select the `...` icon in the upper right to export:
 
-![Export](../../assets/images/exportdashboard.png)
+![Export](../assets/images/exportdashboard.png)
 
 The export will download a json file to your local machine. You can then import this dashboard into any Dynatrace tenant.
