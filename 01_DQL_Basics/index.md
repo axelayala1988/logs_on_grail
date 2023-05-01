@@ -2,7 +2,7 @@
 
 ### Step 1
 
-Login to the provided Dynatrace Tenant. Using the left-hand navigation panel, expand 'Observe & Explore' and select 'Logs'.
+In order to access logs on GRAIL, from the main menu in your environmnet, expand 'Observe & Explore' and select 'Logs'.
 
 ![Logs & Events Viewer](../assets/images/Log_viewer.png)
 
@@ -12,7 +12,7 @@ Once in the advanced mode you'll find the default query producing the content in
 fetch recordTypes
 ```
 
-For the purposes of these hands-on labs we will always begin with `fetch logs` unless otherwise provided.
+For the purposes of these hands-on labs we will always begin with `fetch logs`.
 
 The default query also shows available limits against the data - `scanLimitGBytes` and `samplingRatio` each of these options can be used independently or together. While developing your query it is best practice to use them until the final result requires precise results.
 
