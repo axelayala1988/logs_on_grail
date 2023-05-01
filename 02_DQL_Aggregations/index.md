@@ -37,7 +37,7 @@ fetch logs, scanLimitGBytes:500, samplingRatio:1000
 
 The results should look similar to the screenshot below:
 
-![Order Results](../../assets/images/placedorderresults.png)
+![Order Results](../assets/images/placedorderresults.png)
 
 ### Step 3 - Get the total count
 
@@ -91,7 +91,7 @@ fetch logs
 
 Finally, change the visualization type to 'bar' and pin the results to the same 'Unleash Log Analytics Perform 2023' dashboard.
 
-![Lab2Dashboard](../../assets/images/lab2dashboard.png)
+![Lab2Dashboard](../assets/images/lab2dashboard.png)
 
 ## Bonus Exercises
 
@@ -99,10 +99,10 @@ Finally, change the visualization type to 'bar' and pin the results to the same 
 
 _Note that values in the image below are expected to differ from your results_
 
-![statuscategories](../../assets/images/statuscounts.png)
+![statuscategories](../assets/images/statuscounts.png)
 
 2. Build a DQL query that finds the top process name with the most error records in the last 24 hours (using dql to specify the timeframe). Sort the table by descending order. Hint - your filter should be ERROR (case sensitive).
 
 _Note that values and process names in the image below are expected to differ from your results._
 
-![errorsumbyprocess](../../assets/images/errorsumbyprocess.png)
+![errorsumbyprocess](../assets/images/errorsumbyprocess.png)
