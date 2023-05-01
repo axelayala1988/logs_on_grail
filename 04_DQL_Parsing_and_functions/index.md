@@ -92,7 +92,7 @@ fetch logs
 |limit 3
 ```
 
-![JSON parse](../../assets/images/jsonParse.png)
+![JSON parse](../assets/images/jsonParse.png)
 
 
 ### Step 3 - Accessing JSON parameters from the parsed result
