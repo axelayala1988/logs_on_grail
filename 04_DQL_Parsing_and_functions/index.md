@@ -43,7 +43,7 @@ Dynatrace Pattern Language (DPL) is a pattern language that allows you to descri
 ### Matching vs Parsing
 A matcher will extract data only when it has been assigned an export name - this is an arbitrary name of your choice, which becomes the name of the field you use in query statements. In this example, the pattern has 11 matchers in total, 4 of which are extracting data. The matchers extracting data are defined by a colon (:) followed by the exporter name.
 
-![Parsing Example](../../assets/images/parsingExample.png)
+![Parsing Example](../assets/images/parsingExample.png)
 
 ### JSON Parsing
 
@@ -179,7 +179,7 @@ fetch logs
 
 The goal is to breakdown the provided entry into individual fields, the result should look something like this:
 
-![Parse result](../../assets/images/parseResult.png)
+![Parse result](../assets/images/parseResult.png)
 
 
 **Useful links**
