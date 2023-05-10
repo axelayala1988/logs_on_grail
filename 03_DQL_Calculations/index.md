@@ -146,6 +146,7 @@ Let's take a look at a calculation exercise
 
 <details>
     <summary>Solution</summary>
+    
 ```
 fetch logs
 | filter status == "ERROR" and contains(dt.process.name, "MsgBrokerService.exe")
@@ -153,9 +154,10 @@ fetch logs
 | limit 1
 | fields timestamp, last_message=now()-timestamp, last_message_seconds=(now()-timestamp)/(1000000000)
 ```
+    
 </details>
 
-**Extra Credit:**
+**Bonus exercise:**
 <br>
 Calculate the percent of logs received for the status types `ERROR`, `WARN`, `INFO`, `NONE` over the past 30 minutes
 
