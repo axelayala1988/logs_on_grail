@@ -162,7 +162,8 @@ fetch logs
 Calculate the percent of logs received for the status types `ERROR`, `WARN`, `INFO`, `NONE` over the past 30 minutes
 
 <details>
-    <summary>Solution</summary>
+    <summary>Solution</summary> 
+    
 ```
 fetch logs
 | fields content,status
@@ -172,4 +173,5 @@ fetch logs
 | fieldsAdd nonePercent = round(toDouble(countNone)/toDouble(total)*(100), decimals:3)
 | fieldsAdd warnPercent = round(toDouble(countWarn)/toDouble(total)*(100), decimals:3)
 ```
+    
 </details>
