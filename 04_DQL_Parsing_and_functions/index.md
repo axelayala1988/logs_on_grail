@@ -103,6 +103,7 @@ fetch logs
 | summarize count(), by:{Product, Environment}
 | sort `count()` desc
 ```
+![JSON parse](../assets/images/parseEnvandProd.png)
 
 
 
