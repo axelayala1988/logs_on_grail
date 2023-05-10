@@ -55,41 +55,23 @@ The following query gives us an idea of the useful parameters that we can use, l
 
 ```
 fetch logs
-|filter k8s.deployment.name == "frontend-*" AND matchesPhrase(content, "http.resp.took_ms")
-|fields content
-|limit 3
+| filter matchesPhrase(process.technology, ".NET")
+| fields content
+| limit 2
 ```
 This will give you sample information of log entries with the information that we are looking for:
-```
-Content
-{
-  "dt.span_id": "8918cd9f31a4168b",
-  "dt.trace_id": "a36d00ed72aac309ea2dd697bd139595",
-  "dt.trace_sampled": "true",
-  "http.req.id": "7b0459a5-21b3-46eb-8650-15d188d122e7",
-  "http.req.method": "GET",
-  "http.req.path": "/product/9SIQT8TOJO",
-  "http.resp.bytes": 8142,
-  "http.resp.status": 200,
-  "http.resp.took_ms": 14,
-  "message": "request complete",
-  "session": "444e8080-9164-48fb-8693-9f5c912b8404",
-  "severity": "debug",
-  "timestamp": "2022-12-07T15:51:25.641940916Z"
-}
-```
 
 ### Step 2 - Parsing the JSON response
 
-Now that we have example log entry with some interesting data parameters, let's use the parse command to extract the data values for http.resp.bytes, http.resp.took_ms, and session parameters. Since this log is already in JSON format, DQL offers a convenient way to parse it. In this case we will use the __json__ variable to store the parsed result. Doing this will enumerate all elements, transform them into Log processing data type from their defined type in JSON and returns a variant_object with parsed elements. 
+Now that we have example log entry with some interesting data parameters, let's use the parse command to extract the data values for Message, Product, and Envrionment parameters. Since most of the contents of these kind of log entries are already in JSON format, DQL offers a convenient way to parse it. In this case we will use the __json__ variable to store the parsed result. Doing this will enumerate all elements, transform them into Log processing data type from their defined type in JSON and returns a variant_object with parsed elements. 
 Now that we have the JSON object parsed, we can access individual parameters and list those as fields
 
 ```
 fetch logs
-|filter k8s.deployment.name == "frontend-*" AND matchesPhrase(content, "http.resp.took_ms")
-|parse content, "JSON:json"
-|fields json, json[http.req.path], json[http.req.id], json[http.resp.status]
-|limit 3
+| filter matchesPhrase(process.technology, ".NET")
+| parse content, "LDATA JSON:json"
+| fields json, json[Message], json[Product], json[Environment]
+| limit 2
 ```
 
 ![JSON parse](../assets/images/jsonParse.png)
@@ -97,34 +79,39 @@ fetch logs
 
 ### Step 3 - Accessing JSON parameters from the parsed result
 
-Now that we can refer the JSON result using the __json__ identifier, we can use the normal JSON key:value convention to access parameters from the result. Also take a look at the conditional in the fourth row, we are going to work only with entries that had a JSON response and the session ID is not the _x-liveness-probe_ or _x-readiness-probe_, optimizing our query.
+Now that we can refer the JSON result using the __json__ identifier, we can use the normal JSON key:value convention to access parameters from the result. Also take a look at the conditional in the fourth row, we are going to work only with entries that had a JSON response making sure the JSON payload contains a __Environment__ parameter, optimizing our query.
 
 ```
 fetch logs
-|filter k8s.deployment.name == "frontend-*" AND matchesPhrase(content, "http.resp.took_ms")
-|parse content, "JSON:json"
-|filter isNotNull(json[session]) AND NOT(startsWith(json[session], "x-"))
-|fields responseTime = json[http.resp.took_ms], requestSize = json[http.resp.bytes], session = json[session], actionTime = toLong(timestamp)/1000000000
-|limit 3
+| filter matchesPhrase(process.technology, ".NET") and matchesPhrase(content, "Message")
+| parse content, "LDATA JSON:json"
+| filter isNotNull(json[Environment])
+| fields json, Message = json[Message], Product = json[Product], Environment = json[Environment]
+| limit 3
 ```
 
-### Step 4 - Summarizing sessions based on important information
+### Step 4 - Summarizing records based on Product and Environment
 
-With the new fields that we extracted from parsing the JSON response, now we can start implementing some functions and logic to summarize the top 10 longest sessions, and report the total size in KB for the session, along with the total response time per session.
-We can perform calculations, such as generate a total duration time (sessionDurationInMinutes) as shown in line 6 of the query below. Here we take the first action time (taken from the timestamp reported per request) and subtract that from the with the last action time, once the information is available per session ID
+With the new fields that we extracted from parsing the JSON response, now we can start implementing some functions and logic to summarize which are the combinations of Products and Environments with the most records.
 
 ```
 fetch logs
-|filter k8s.deployment.name == "frontend-*" AND matchesPhrase(content, "http.resp.took_ms")
-|parse content, "JSON:json"
-|filter isNotNull(json[session]) AND NOT(startsWith(json[session], "x-"))
-|fields responseTime = json[http.resp.took_ms], requestSize = json[http.resp.bytes], session = json[session], actionTime = toLong(timestamp)/1000000000
-|summarize firstAction = first(actionTime), lastAction = last(actionTime), sessionSizeKBs = sum(requestSize/1024), sessionResponsetimeInMs = sum(responseTime), by:session
-|fieldsAdd sessionDurationInMinutes = (lastAction - firstAction)/60
-|fieldsRemove firstAction, lastAction
-|sort sessionDurationInMinutes desc
-|limit 10
+| filter matchesPhrase(process.technology, ".NET") and matchesPhrase(content, "Message")
+| parse content, "LD '|' SPACE LD:severity SPACE '|' SPACE JSON:json"
+| filter isNotNull(json[Environment])
+| fields Product = json[Product], Environment = json[Environment]
+| summarize count(), by:{Product, Environment}
+| sort `count()` desc
 ```
+
+
+
+
+Start from here
+
+
+
+
 
 ## Additional exercises - Parsing only
 
