@@ -140,7 +140,7 @@ source: https://www.dynatrace.com/support/help/shortlink/dql-operators#string-op
 
 ## Calculation examples
 
-Let's try some calculation exercises
+Let's take a look at a calculation exercise
 
 1. Find how long until the last log record for the container `cartservice` was received
 
@@ -149,12 +149,13 @@ Let's try some calculation exercises
 
 ![](../../assets/images/Calculations_TimestampCalculation.png)
 <br>
-`   fetch       logs
+    ```
+    fetch       logs
     | filter    k8s.container.name == "cartservice"
     | sort      timestamp desc
     | limit     1
     | fields    timestamp, age_message = now()-timestamp
-  `
+  ```
 
 </details>
 
