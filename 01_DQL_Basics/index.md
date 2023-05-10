@@ -41,15 +41,13 @@ fetch logs, scanLimitGBytes: 500, samplingRatio: 1000, from: now() -2h
 
 Combine filters with AND/OR logic:
 
-Show all logs related to any kubernetes container & have log level = error:
+Show all logs related to any .NET technology that have log level = error:
 
 ```
 fetch logs, scanLimitGBytes: 500, samplingRatio: 1000, from: now() -2h
-| filter isNotNull(k8s.container.name) AND status == "ERROR"
+| filter loglevel == "ERROR" and matchesPhrase(process.technology, ".NET")
 | sort timestamp desc
 ```
-
-In the above query the isNotNull() is used to ensure the k8s property of container exists and is not null.
 
 ### Step 3 - Clean up results with field selectors
 
@@ -59,7 +57,7 @@ Starting with the DQL Query:
 
 ```
 fetch logs, scanLimitGBytes: 500, samplingRatio: 1000, from: now() -2h
-| filter isNotNull(k8s.container.name) AND status == "ERROR"
+| filter loglevel == "ERROR" and matchesPhrase(process.technology, ".NET")
 | sort timestamp desc
 ```
 
@@ -67,15 +65,15 @@ Add the `fields:` command to the query and only select the following fields:
 
 - timestamp
 - content
-- k8s.container.name
-- k8s.namespace.name
+- dt.entity.host
+- process.technology
 
 The resulting query should look like:
 
 ```
-fetch logs, scanLimitGBytes: 500, samplingRatio: 1000, from: now() -2h
-| filter isNotNull(k8s.container.name) AND status == "ERROR"
-| fields timestamp, content, k8s.container.name, k8s.namespace.name
+fetch logs
+| filter loglevel == "ERROR" and matchesPhrase(process.technology, ".NET")
+| fields timestamp, content, dt.entity.host, process.technology 
 | sort timestamp desc
 ```
 
@@ -85,7 +83,7 @@ To find log records that match a portion of a specific field we can use the `con
 
 ```
 fetch logs
-| filter matchesPhrase(content, "/product/") and k8s.container.name == "nginx"
+| filter matchesPhrase(content, "Connection started")
 ```
 
 Matching can be used on any field of a record. The `matchesPhrase()` function must match as a complete string example:
@@ -94,7 +92,7 @@ Matching can be used on any field of a record. The `matchesPhrase()` function mu
 
 ```
 fetch logs
-| filter matchesPhrase(dt.process.name, "frontend")
+| filter matchesPhrase(dt.process.name, "MsgBrokerService.exe")
 ```
 
 The above query should not return any results.
@@ -103,7 +101,7 @@ However, using `contains()`
 
 ```
 fetch logs
-| filter contains(dt.process.name, "frontend")
+| filter contains(dt.process.name, "MsgBrokerService.exe")
 ```
 
 will return results.
