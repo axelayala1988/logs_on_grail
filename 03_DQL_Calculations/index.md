@@ -142,19 +142,16 @@ source: https://www.dynatrace.com/support/help/shortlink/dql-operators#string-op
 
 Let's take a look at a calculation exercise
 
-1. Find how long until the last log record for the container `cartservice` was received
+1. Find how long until the last eror log record for the process "DG_XML*MsgBrokerService.exe" was received
 
 <details>
     <summary>Solution</summary>
-
-![](../../assets/images/Calculations_TimestampCalculation.png)
-<br>
 ```
 fetch logs
-| filter k8s.container.name == "cartservice"
+| filter status == "ERROR" and contains(dt.process.name, "MsgBrokerService.exe")
 | sort timestamp desc
 | limit 1
-| fields timestamp, last_message = now()-timestamp
+| fields timestamp, last_message=now()-timestamp, last_message_seconds=(now()-timestamp)/(1000000000)
 ```
 </details>
 
@@ -164,15 +161,13 @@ Calculate the percent of logs received for the status types `ERROR`, `WARN`, `IN
 
 <details>
     <summary>Solution</summary>
-
-![](../../assets/images/Calculations_FinalExercise.png)
-<br>
-`   fetch logs
-    | fields content,status| summarize total = count(), countError = countIf(status == "ERROR"), countInfo = countIf(status == "INFO"),countNone = countIf(status == "NONE"), countWarn = countIf(status == "WARN")
-    | fieldsAdd errorPercent = toDouble(countError)/toDouble(total)*(100) 
-    | fieldsAdd infoPercent = toDouble(countInfo)/toDouble(total)*(100) 
-    | fieldsAdd nonePercent = toDouble(countNone)/toDouble(total)*(100) 
-    | fieldsAdd warnPercent = toDouble(countWarn)/toDouble(total)*(100)
-  `
-
+```
+fetch logs
+| fields content,status
+| summarize total = count(), countError = countIf(status == "ERROR"), countInfo = countIf(status == "INFO"),countNone = countIf(status == "NONE"), countWarn = countIf(status == "WARN")
+| fieldsAdd errorPercent = round(toDouble(countError)/toDouble(total)*(100), decimals:3)
+| fieldsAdd infoPercent = round(toDouble(countInfo)/toDouble(total)*(100), decimals:3)
+| fieldsAdd nonePercent = round(toDouble(countNone)/toDouble(total)*(100), decimals:3)
+| fieldsAdd warnPercent = round(toDouble(countWarn)/toDouble(total)*(100), decimals:3)
+```
 </details>
