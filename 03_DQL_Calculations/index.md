@@ -149,14 +149,13 @@ Let's take a look at a calculation exercise
 
 ![](../../assets/images/Calculations_TimestampCalculation.png)
 <br>
-    ```
-    fetch       logs
-    | filter    k8s.container.name == "cartservice"
-    | sort      timestamp desc
-    | limit     1
-    | fields    timestamp, age_message = now()-timestamp
-  ```
-
+```
+fetch logs
+| filter k8s.container.name == "cartservice"
+| sort timestamp desc
+| limit 1
+| fields timestamp, last_message = now()-timestamp
+```
 </details>
 
 **Extra Credit:**
